@@ -1,0 +1,12 @@
+FROM alpine:3.20
+RUN apk add --no-cache php83 php83-fpm php83-mysqli php83-json php83-curl php83-mbstring php83-xml php83-gd php83-zip curl \
+    && mkdir -p /var/www/html \
+    && curl -o wordpress.tar.gz -SL https://wordpress.org/latest.tar.gz \
+    && tar -xzf wordpress.tar.gz -C /var/www/html --strip-components=1 \
+    && rm wordpress.tar.gz \
+    && chown -R nobody:nobody /var/www/html
+COPY php-fpm.conf /etc/php83/php-fpm.d/www.conf
+COPY wp-config.php /var/www/html/wp-config.php
+COPY wp.sh /usr/local/bin/wp.sh
+RUN chmod +x /usr/local/bin/wp.sh
+CMD ["/usr/local/bin/wp.sh"]
